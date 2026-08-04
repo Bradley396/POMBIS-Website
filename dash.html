@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration Dashboard | POMBC</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandRed: '#DC2626',
+                        brandRedDark: '#991B1B',
+                        brandBlack: '#0F0F11',
+                        brandCharcoal: '#18181B'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Inter', sans-serif; }</style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- HEADER / TOPBAR -->
+    <header class="bg-brandBlack text-white border-b-4 border-brandRed sticky top-0 z-20 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-brandRed rounded-lg flex items-center justify-center font-black text-white text-lg">
+                    POM
+                </div>
+                <div>
+                    <h1 class="font-black text-base uppercase tracking-tight leading-none">Port Moresby Business College</h1>
+                    <span class="text-[11px] text-slate-400 font-medium">Student Information & Registration Management System</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-3 text-xs font-semibold">
+                <span class="hidden sm:inline bg-white/10 px-3 py-1.5 rounded-full border border-white/10 text-slate-300">
+                    Academic Year: <strong class="text-white">2026</strong>
+                </span>
+                <button onclick="openModal()" class="bg-brandRed hover:bg-brandRedDark text-white px-4 py-2 rounded-lg font-extrabold uppercase tracking-wider transition-all shadow-sm">
+                    + Register Student
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-6">
+
+        <!-- METRICS / STATS OVERVIEW -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                <div>
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Total Students</span>
+                    <strong id="stat-total" class="text-2xl font-black text-brandBlack mt-1 block">0</strong>
+                </div>
+                <div class="w-12 h-12 bg-red-50 text-brandRed rounded-xl flex items-center justify-center text-xl font-bold">
+                    👥
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                <div>
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Diploma Enrolled</span>
+                    <strong id="stat-diploma" class="text-2xl font-black text-brandBlack mt-1 block">0</strong>
+                </div>
+                <div class="w-12 h-12 bg-slate-100 text-slate-800 rounded-xl flex items-center justify-center text-xl font-bold">
+                    🎓
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                <div>
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">TTC Enrolled</span>
+                    <strong id="stat-ttc" class="text-2xl font-black text-brandBlack mt-1 block">0</strong>
+                </div>
+                <div class="w-12 h-12 bg-slate-100 text-slate-800 rounded-xl flex items-center justify-center text-xl font-bold">
+                    📜
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                <div>
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Verified Registration</span>
+                    <strong id="stat-active" class="text-2xl font-black text-emerald-600 mt-1 block">0</strong>
+                </div>
+                <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-xl font-bold">
+                    ✅
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTROLS & TABLE CARD -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            
+            <!-- CONTROLS BAR -->
+            <div class="p-5 border-b border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row gap-4 items-center justify-between text-xs">
+                <div class="w-full sm:w-72">
+                    <input type="text" id="searchInput" oninput="renderStudents()" placeholder="Search by name, ID, or email..." class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl focus:outline-none focus:border-brandRed font-medium">
+                </div>
+                <div class="flex gap-3 w-full sm:w-auto">
+                    <select id="filterProgram" onchange="renderStudents()" class="w-full sm:w-auto px-4 py-2.5 bg-white border border-slate-300 rounded-xl focus:outline-none focus:border-brandRed font-medium">
+                        <option value="ALL font-semibold">All Programs</option>
+                        <option value="Diploma in Accounting">Diploma in Accounting</option>
+                        <option value="Diploma in Business Management">Diploma in Business Management</option>
+                        <option value="Diploma in Business IT">Diploma in Business IT</option>
+                        <option value="Diploma in Office Administration">Diploma in Office Administration</option>
+                        <option value="Diploma in Tourism & Hospitality">Diploma in Tourism & Hospitality</option>
+                        <option value="TTC - Tourism & Hospitality Operations">TTC Tourism & Hospitality</option>
+                        <option value="TTC - Certificate in Business Studies">TTC Business Studies</option>
+                    </select>
+
+                    <select id="filterStatus" onchange="renderStudents()" class="w-full sm:w-auto px-4 py-2.5 bg-white border border-slate-300 rounded-xl focus:outline-none focus:border-brandRed font-medium">
+                        <option value="ALL">All Statuses</option>
+                        <option value="Active">Active / Registered</option>
+                        <option value="Pending">Pending Payment</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- TABLE -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-slate-700">
+                    <thead class="bg-slate-100 text-slate-900 uppercase font-extrabold border-b border-slate-200">
+                        <tr>
+                            <th class="px-6 py-3.5">Student ID</th>
+                            <th class="px-6 py-3.5">Full Name</th>
+                            <th class="px-6 py-3.5">Enrolled Program</th>
+                            <th class="px-6 py-3.5">Year Level</th>
+                            <th class="px-6 py-3.5">Status</th>
+                            <th class="px-6 py-3.5 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentTableBody" class="divide-y divide-slate-100 font-medium">
+                        <!-- Dynamic Student Rows Injected Here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- EMPTY STATE -->
+            <div id="emptyState" class="hidden p-12 text-center space-y-3">
+                <div class="text-3xl">🔍</div>
+                <h3 class="font-bold text-slate-700">No Student Records Found</h3>
+                <p class="text-xs text-slate-500">Try adjusting your search criteria or register a new student.</p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- NEW STUDENT REGISTRATION MODAL -->
+    <div id="registrationModal" class="fixed inset-0 bg-brandBlack/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl border-2 border-slate-200 max-w-xl w-full p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-brandRed text-xl font-bold">✕</button>
+            
+            <div class="mb-6">
+                <span class="text-brandRed font-extrabold text-[10px] uppercase tracking-widest bg-red-50 px-2.5 py-1 rounded border border-red-200">
+                    Admission Form
+                </span>
+                <h2 class="text-2xl font-black text-brandBlack uppercase tracking-tight mt-1">Register New Student</h2>
+            </div>
+
+            <form id="studentForm" onsubmit="handleFormSubmit(event)" class="space-y-4 text-xs">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-bold text-slate-800 uppercase mb-1">First Name *</label>
+                        <input type="text" id="firstName" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:border-brandRed">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-800 uppercase mb-1">Last Name *</label>
+                        <input type="text" id="lastName" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:border-brandRed">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-bold text-slate-800 uppercase mb-1">Email Address *</label>
+                        <input type="email" id="email" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:border-brandRed">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-800 uppercase mb-1">Phone Number</label>
+                        <input type="tel" id="phone" placeholder="+675 7000 0000" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:border-brandRed">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-800 uppercase mb-1">Academic Program *</label>
+                    <select id="program" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:border-brandRed font-medium">
+                        <option value="">Select Enrolling Program...</option>
+                        <optgroup label="2-Year National Diplomas">
+                            <option value="Diploma in Accounting">Diploma in Accounting</option>
+                            <option value="Diploma in Business Management">Diploma in Business Management</option>
+                            <option value="Diploma in Business IT">Diploma in Business IT</option>
+                            <option value="Diploma in Office Administration">Diploma in Office Administration</option>
+                            <option value="Diploma in Tourism & Hospitality">Diploma in Tourism & Hospitality</option>
+                        </optgroup>
+                        <optgroup label="1-Year Technical Certificates (TTC)">
+                            <option value="TTC - Tourism & Hospitality Operations">TTC Tourism & Hospitality</option>
+                            <option value="TTC - Certificate in Business Studies">TTC Business Studies</option>
+                            <option value="TTC - Accounting Applications">TTC Accounting Applications</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-bold text-slate-800 uppercase mb-1">Year Level *</label>
+                        <select id="yearLevel" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:border-brandRed font-medium">
+                            <option value="Year 1">Year 1</option>
+                            <option value="Year 2">Year 2</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-800 uppercase mb-1">Registration Status *</label>
+                        <select id="status" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:border-brandRed font-medium">
+                            <option value="Active">Active / Registered</option>
+                            <option value="Pending">Pending Fee Payment</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="pt-4 flex justify-end gap-3 border-t border-slate-100">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 font-bold uppercase rounded-lg text-slate-700">Cancel</button>
+                    <button type="submit" class="px-5 py-2.5 bg-brandRed hover:bg-brandRedDark text-white font-extrabold uppercase rounded-lg tracking-wider">Save Registration</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT STATE ENGINE -->
+    <script>
+        // Sample Initial Data
+        let students = [
+            { id: 'POM-2026-001', name: 'John Kua', email: 'j.kua@student.pombc.ac.pg', program: 'Diploma in Business IT', year: 'Year 1', status: 'Active' },
+            { id: 'POM-2026-002', name: 'Sarah Pari', email: 's.pari@student.pombc.ac.pg', program: 'Diploma in Accounting', year: 'Year 2', status: 'Active' },
+            { id: 'POM-2026-003', name: 'Michael Kora', email: 'm.kora@student.pombc.ac.pg', program: 'Diploma in Tourism & Hospitality', year: 'Year 1', status: 'Pending' },
+            { id: 'POM-2026-004', name: 'Grace Amini', email: 'g.amini@student.pombc.ac.pg', program: 'TTC - Tourism & Hospitality Operations', year: 'Year 1', status: 'Active' },
+            { id: 'POM-2026-005', name: 'David Teka', email: 'd.teka@student.pombc.ac.pg', program: 'Diploma in Office Administration', year: 'Year 1', status: 'Pending' }
+        ];
+
+        function renderStudents() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const programFilter = document.getElementById('filterProgram').value;
+            const statusFilter = document.getElementById('filterStatus').value;
+            
+            const tbody = document.getElementById('studentTableBody');
+            tbody.innerHTML = '';
+
+            const filtered = students.filter(s => {
+                const matchesSearch = s.name.toLowerCase().includes(search) || s.id.toLowerCase().includes(search) || s.email.toLowerCase().includes(search);
+                const matchesProgram = programFilter === 'ALL' || s.program === programFilter;
+                const matchesStatus = statusFilter === 'ALL' || s.status === statusFilter;
+                return matchesSearch && matchesProgram && matchesStatus;
+            });
+
+            if (filtered.length === 0) {
+                document.getElementById('emptyState').classList.remove('hidden');
+            } else {
+                document.getElementById('emptyState').classList.add('hidden');
+            }
+
+            filtered.forEach(student => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50/80 transition-colors';
+                
+                const statusBadge = student.status === 'Active' 
+                    ? `<span class="bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded-full text-[10px]">Active</span>`
+                    : `<span class="bg-amber-100 text-amber-800 font-bold px-2.5 py-1 rounded-full text-[10px]">Pending Payment</span>`;
+
+                tr.innerHTML = `
+                    <td class="px-6 py-4 font-bold text-brandBlack">${student.id}</td>
+                    <td class="px-6 py-4">
+                        <div class="font-bold text-slate-900">${student.name}</div>
+                        <div class="text-[11px] text-slate-400 font-normal">${student.email}</div>
+                    </td>
+                    <td class="px-6 py-4 font-medium">${student.program}</td>
+                    <td class="px-6 py-4 font-semibold">${student.year}</td>
+                    <td class="px-6 py-4">${statusBadge}</td>
+                    <td class="px-6 py-4 text-right">
+                        <button onclick="deleteStudent('${student.id}')" class="text-red-600 hover:text-red-800 font-bold hover:underline">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            updateStats();
+        }
+
+        function updateStats() {
+            document.getElementById('stat-total').innerText = students.length;
+            document.getElementById('stat-diploma').innerText = students.filter(s => s.program.startsWith('Diploma')).length;
+            document.getElementById('stat-ttc').innerText = students.filter(s => s.program.startsWith('TTC')).length;
+            document.getElementById('stat-active').innerText = students.filter(s => s.status === 'Active').length;
+        }
+
+        function openModal() {
+            document.getElementById('registrationModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('registrationModal').classList.add('hidden');
+            document.getElementById('studentForm').reset();
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const newId = `POM-2026-00${students.length + 1}`;
+            const newStudent = {
+                id: newId,
+                name: `${document.getElementById('firstName').value} ${document.getElementById('lastName').value}`,
+                email: document.getElementById('email').value,
+                program: document.getElementById('program').value,
+                year: document.getElementById('yearLevel').value,
+                status: document.getElementById('status').value
+            };
+
+            students.unshift(newStudent);
+            renderStudents();
+            closeModal();
+        }
+
+        function deleteStudent(id) {
+            if (confirm(`Are you sure you want to remove student ${id}?`)) {
+                students = students.filter(s => s.id !== id);
+                renderStudents();
+            }
+        }
+
+        // Initialize table on page load
+        renderStudents();
+    </script>
+</body>
+</html>
