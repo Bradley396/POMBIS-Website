@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Portal - Port Moresby Business College</title>
+  <style>
+    :root {
+      --primary-color: #800000;    /* Crimson Red */
+      --primary-dark: #5a0000;
+      --accent-color: #FFD700;     /* Gold */
+      --bg-color: #f4f6f9;
+      --card-bg: #ffffff;
+      --text-color: #2c3e50;
+      --text-muted: #6c757d;
+      --border-color: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      min-height: 100vh;
+    }
+
+    /* --- LOGIN VIEW --- */
+    .login-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    }
+
+    .login-card {
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 420px;
+      padding: 40px 30px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      border-top: 6px solid var(--accent-color);
+      text-align: center;
+    }
+
+    .login-card h2 {
+      color: var(--primary-color);
+      margin-bottom: 8px;
+      font-size: 1.6rem;
+    }
+
+    .login-card p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text-color);
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus {
+      border-color: var(--primary-color);
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 12px;
+      background-color: var(--primary-color);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-submit:hover {
+      background-color: var(--primary-dark);
+    }
+
+    .error-msg {
+      color: #e74c3c;
+      font-size: 0.85rem;
+      margin-top: 10px;
+      display: none;
+    }
+
+    /* --- DASHBOARD VIEW --- */
+    .dashboard-wrapper {
+      display: none; /* hidden until logged in */
+      min-height: 100vh;
+      flex-direction: column;
+    }
+
+    header {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 4px solid var(--accent-color);
+    }
+
+    header .brand h1 {
+      font-size: 1.3rem;
+    }
+
+    header .user-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .btn-logout {
+      background: transparent;
+      border: 1px solid var(--accent-color);
+      color: var(--accent-color);
+      padding: 6px 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .btn-logout:hover {
+      background: var(--accent-color);
+      color: var(--primary-color);
+    }
+
+    .main-container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+      width: 100%;
+    }
+
+    .welcome-banner {
+      background-color: var(--card-bg);
+      padding: 25px;
+      border-radius: 8px;
+      border-left: 5px solid var(--primary-color);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      margin-bottom: 25px;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      border: 1px solid var(--border-color);
+    }
+
+    .card h3 {
+      color: var(--primary-color);
+      font-size: 1.1rem;
+      margin-bottom: 15px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--bg-color);
+    }
+
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px dashed var(--border-color);
+      font-size: 0.9rem;
+    }
+
+    .badge {
+      background-color: var(--accent-color);
+      color: var(--primary-color);
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. LOGIN SECTION -->
+  <div id="loginView" class="login-wrapper">
+    <div class="login-card">
+      <h2>POMBIS Student Portal</h2>
+      <p>Port Moresby Business College</p>
+      
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="email">Student Email</label>
+          <input type="email" id="email" placeholder="student@pombis.ac.pg" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn-submit">Login to Dashboard</button>
+        <div id="loginError" class="error-msg">Invalid email or password.</div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. DASHBOARD SECTION -->
+  <div id="dashboardView" class="dashboard-wrapper">
+    <header>
+      <div class="brand">
+        <h1>Port Moresby Business College</h1>
+      </div>
+      <div class="user-info">
+        <span id="navStudentName">Student Name</span>
+        <button id="logoutBtn" class="btn-logout">Logout</button>
+      </div>
+    </header>
+
+    <div class="main-container">
+      <div class="welcome-banner">
+        <h2>Welcome back, <span id="welcomeName">Student</span>!</h2>
+        <p>Department: <strong id="studentDepartment">Loading...</strong></p>
+      </div>
+
+      <div class="grid-container">
+        <!-- Student Details Card -->
+        <div class="card">
+          <h3>Academic Details</h3>
+          <div class="info-item">
+            <span>Student ID:</span>
+            <strong id="studentId">--</strong>
+          </div>
+          <div class="info-item">
+            <span>Semester Status:</span>
+            <span class="badge">Active</span>
+          </div>
+          <div class="info-item">
+            <span>Program:</span>
+            <strong id="studentProgram">--</strong>
+          </div>
+        </div>
+
+        <!-- Enrolled Courses Card -->
+        <div class="card">
+          <h3>Current Enrolled Modules</h3>
+          <div class="info-item">
+            <span>Business Accounting</span>
+            <strong>ACT101</strong>
+          </div>
+          <div class="info-item">
+            <span>Information Technology Systems</span>
+            <strong>ICT102</strong>
+          </div>
+          <div class="info-item">
+            <span>Business Communication</span>
+            <strong>COM101</strong>
+          </div>
+        </div>
+
+        <!-- College Notices Card -->
+        <div class="card">
+          <h3>College Announcements</h3>
+          <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">
+            📢 Semester registration fee receipts must be verified by the bursar's office before the end of the week.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase Modular SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // Firebase Configuration (Replace with your Firebase Project Config details)
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "port-moresby-business-college.firebaseapp.com",
+      projectId: "port-moresby-business-college",
+      storageBucket: "port-moresby-business-college.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // UI Elements
+    const loginView = document.getElementById('loginView');
+    const dashboardView = document.getElementById('dashboardView');
+    const loginForm = document.getElementById('loginForm');
+    const loginError = document.getElementById('loginError');
+
+    // Handle Login
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      loginError.style.display = 'none';
+
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+      } catch (error) {
+        loginError.innerText = error.message;
+        loginError.style.display = 'block';
+      }
+    });
+
+    // Handle Logout
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      signOut(auth);
+    });
+
+    // Monitor Auth State
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // User logged in
+        loginView.style.display = 'none';
+        dashboardView.style.display = 'flex';
+
+        // Load Student Details from Firestore 'Department' or 'Students' Collection
+        try {
+          const docRef = doc(db, "Department", user.uid);
+          const docSnap = await getDoc(docRef);
+
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            document.getElementById('welcomeName').innerText = data.name || user.email;
+            document.getElementById('navStudentName').innerText = data.name || user.email;
+            document.getElementById('studentDepartment').innerText = data.department || "Business Studies";
+            document.getElementById('studentId').innerText = data.studentId || user.uid.substring(0, 8);
+            document.getElementById('studentProgram').innerText = data.program || "Diploma";
+          } else {
+            // Default Fallback
+            document.getElementById('welcomeName').innerText = user.email.split('@')[0];
+            document.getElementById('navStudentName').innerText = user.email;
+            document.getElementById('studentDepartment').innerText = "Business & ICT";
+          }
+        } catch (err) {
+          console.error("Firestore read error:", err);
+        }
+
+      } else {
+        // User logged out
+        loginView.style.display = 'flex';
+        dashboardView.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
