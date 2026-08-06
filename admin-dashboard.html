@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POMBC - Admin Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #1a252f; color: #333; margin: 0; padding: 20px; }
+        .header { background: #d9534f; color: white; padding: 20px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .card { background: white; padding: 20px; border-radius: 8px; margin-top: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #f2f2f2; color: #1a252f; }
+        .btn-delete { background: #d9534f; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
+        .btn-view { background: #003366; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; margin-right: 5px; }
+        .btn-logout { background: #333; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; }
+        /* Modal Style */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 25px; border-radius: 8px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; }
+        .close-btn { background: #d9534f; color: white; border: none; padding: 8px 12px; border-radius: 4px; float: right; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div>
+        <h2 style="margin:0;">POMBC Admin Control Panel</h2>
+        <span>Manage Registered Students</span>
+    </div>
+    <button onclick="adminLogout()" class="btn-logout">Admin Logout</button>
+</div>
+
+<div class="card">
+    <h3>Registered Student Database</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Student ID</th>
+                <th>Full Name</th>
+                <th>Course</th>
+                <th>Class</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="studentTableBody">
+            <!-- Student rows dynamically injected here -->
+        </tbody>
+    </table>
+</div>
+
+<!-- Student Detail Modal -->
+<div id="studentModal" class="modal">
+    <div class="modal-content">
+        <button class="close-btn" onclick="closeModal()">Close</button>
+        <h3 id="modalStudentName">Student Details</h3>
+        <div id="modalDetails"></div>
+    </div>
+</div>
+
+<script>
+    // Access Control Check
+    if (localStorage.getItem('pombc_user_role') !== 'admin') {
+        alert("Access Denied: Admin access required.");
+        window.location.href = "admin.html";
+    }
+
+    function loadStudents() {
+        const students = JSON.parse(localStorage.getItem('pombc_students')) || [];
+        const tbody = document.getElementById('studentTableBody');
+        tbody.innerHTML = "";
+
+        if (students.length === 0) {
+            tbody.innerHTML = "<tr><td colspan='5'>No students registered yet.</td></tr>";
+            return;
+        }
+
+        students.forEach((s, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${s.studentId}</strong></td>
+                <td>${s.fullName}</td>
+                <td>${s.course}</td>
+                <td>${s.classGroup}</td>
+                <td>
+                    <button class="btn-view" onclick="viewStudent(${index})">View Profile</button>
+                    <button class="btn-delete" onclick="deleteStudent('${s.studentId}')">Delete</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function viewStudent(index) {
+        const students = JSON.parse(localStorage.getItem('pombc_students')) || [];
+        const s = students[index];
+
+        document.getElementById('modalStudentName').textContent = s.fullName + " (" + s.studentId + ")";
+        document.getElementById('modalDetails').innerHTML = `
+            <p><strong>Course:</strong> ${s.course}</p>
+            <p><strong>Class:</strong> ${s.classGroup}</p>
+            <h4>Year 1 - Sem 1:</h4> <p>${s.curriculum.y1s1.join(', ')}</p>
+            <h4>Year 1 - Sem 2:</h4> <p>${s.curriculum.y1s2.join(', ')}</p>
+            <h4>Year 2 - Sem 1:</h4> <p>${s.curriculum.y2s1.join(', ')}</p>
+            <h4>Year 2 - Sem 2:</h4> <p>${s.curriculum.y2s2.join(', ')}</p>
+        `;
+        document.getElementById('studentModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('studentModal').style.display = 'none';
+    }
+
+    function deleteStudent(studentId) {
+        if (confirm("Are you sure you want to remove student ID: " + studentId + "?")) {
+            let students = JSON.parse(localStorage.getItem('pombc_students')) || [];
+            students = students.filter(s => s.studentId !== studentId);
+            localStorage.setItem('pombc_students', JSON.stringify(students));
+            loadStudents();
+        }
+    }
+
+    function adminLogout() {
+        localStorage.removeItem('pombc_user_role');
+        window.location.href = "admin.html";
+    }
+
+    // Initial load
+    loadStudents();
+</script>
+
+</body>
+</html>

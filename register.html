@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POMBC - Student Registration</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f6f9; margin: 0; padding: 40px 20px; }
+        .reg-container { max-width: 550px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        h2 { color: #003366; margin-top: 0; text-align: center; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .btn-submit { width: 100%; padding: 12px; background: #003366; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .btn-submit:hover { background: #002244; }
+        .login-link { text-align: center; margin-top: 15px; font-size: 14px; }
+        .login-link a { color: #003366; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="reg-container">
+    <h2>Student Registration Portal</h2>
+    <form id="registrationForm">
+        <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="fullName" placeholder="e.g. John Doe" required>
+        </div>
+        <div class="form-group">
+            <label>Student ID / Username</label>
+            <input type="text" id="studentId" placeholder="e.g. POMBC2026001" required>
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="password" placeholder="Create a password" required>
+        </div>
+        <div class="form-group">
+            <label>Program / Course</label>
+            <select id="course" required>
+                <option value="Business Computing">Diploma in Business Computing</option>
+                <option value="Accounting Studies">Diploma in Accounting Studies</option>
+                <option value="Business Management">Diploma in Business Management</option>
+                <option value="Hospitality Management">Diploma in Hospitality Management</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Current Academic Year & Class</label>
+            <select id="classGroup" required>
+                <option value="Year 1 - Section A">Year 1 - Section A</option>
+                <option value="Year 1 - Section B">Year 1 - Section B</option>
+                <option value="Year 2 - Section A">Year 2 - Section A</option>
+            </select>
+        </div>
+        <button type="submit" class="btn-submit">Register Now</button>
+    </form>
+    <div class="login-link">
+        Already registered? <a href="student.html">Login Here</a>
+    </div>
+</div>
+
+<script>
+    // Pre-defined Semester Subjects for Courses
+    const courseCurriculums = {
+        "Business Computing": {
+            y1s1: ["Accounting 1", "Office Management", "Communication 1", "Business Statistics"],
+            y1s2: ["Business Maths", "Intermediate Word Processing & Graphics", "Principles of Management"],
+            y2s1: ["Intro to Programming", "Computer Information Systems 1", "Spreadsheets & Database Systems"],
+            y2s2: ["Web Development", "Network Infrastructure", "System Administration"]
+        },
+        "Accounting Studies": {
+            y1s1: ["Commercial Accounting 1", "Business Communication", "Business Maths", "Commercial Law"],
+            y1s2: ["Commercial Accounting 2", "Cost Accounting", "Principles of Management", "Economics"],
+            y2s1: ["Advanced Financial Accounting", "MYOB Software", "Taxation Principles", "Auditing Basics"],
+            y2s2: ["Internal Auditing", "Financial Management", "Company Law", "Accounting Project"]
+        },
+        "Business Management": {
+            y1s1: ["Business Admin 1", "Business Communication", "Business Maths", "Commercial Law"],
+            y1s2: ["Office Management", "Human Resources Basics", "Principles of Management", "Marketing Principles"],
+            y2s1: ["Operations Management", "Business Ethics", "Commercial Law 2", "Project Management"],
+            y2s2: ["Strategic Management", "Entrepreneurship", "Public Relations", "Management Practicum"]
+        },
+        "Hospitality Management": {
+            y1s1: ["Hospitality Intro", "Front Office Operations", "Communication 1", "Food & Beverage 1"],
+            y1s2: ["Housekeeping Operations", "Customer Service Excellence", "Food Safety & Hygiene"],
+            y2s1: ["Hotel Admin & Operations", "Catering Management", "Tourism Studies", "Bar Operations"],
+            y2s2: ["Resort Management", "Hospitality Accounting", "Event Management", "Industry Placement"]
+        }
+    };
+
+    document.getElementById('registrationForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const studentId = document.getElementById('studentId').value.trim();
+        const fullName = document.getElementById('fullName').value.trim();
+        const password = document.getElementById('password').value.trim();
+        const course = document.getElementById('course').value;
+        const classGroup = document.getElementById('classGroup').value;
+
+        // Retrieve existing database array or create a new one
+        let students = JSON.parse(localStorage.getItem('pombc_students')) || [];
+
+        // Check if ID already exists
+        if (students.some(s => s.studentId === studentId)) {
+            alert("This Student ID is already registered! Please log in.");
+            return;
+        }
+
+        // Build new student profile object
+        const newStudent = {
+            studentId: studentId,
+            fullName: fullName,
+            password: password,
+            course: course,
+            classGroup: classGroup,
+            curriculum: courseCurriculums[course]
+        };
+
+        students.push(newStudent);
+        localStorage.setItem('pombc_students', JSON.stringify(students));
+
+        alert("Registration Successful! Redirecting to login...");
+        window.location.href = "student.html";
+    });
+</script>
+
+</body>
+</html>
