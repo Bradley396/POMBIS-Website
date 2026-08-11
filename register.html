@@ -40,7 +40,8 @@
                 <option value="Business Computing">Diploma in Business Computing</option>
                 <option value="Accounting Studies">Diploma in Accounting Studies</option>
                 <option value="Business Management">Diploma in Business Management</option>
-                <option value="Hospitality Management">Diploma in Hospitality Management</option>
+                <option value="Hospitality Management">Diploma in Tourism& Hospitality</option>
+                <option value="Hospitality Management">Diploma in Office Administrtaion</option>
             </select>
         </div>
         <div class="form-group">
@@ -49,6 +50,7 @@
                 <option value="Year 1 - Section A">Year 1 - Section A</option>
                 <option value="Year 1 - Section B">Year 1 - Section B</option>
                 <option value="Year 2 - Section A">Year 2 - Section A</option>
+                <option value="Year 2 - Section B">Year 2 - Section B</option>
             </select>
         </div>
         <button type="submit" class="btn-submit">Register Now</button>
@@ -86,6 +88,12 @@
             y2s2: ["Resort Management", "Hospitality Accounting", "Event Management", "Industry Placement"]
         }
     };
+      "Hospitality Management": {
+            y1s1: ["Hospitality Intro", "Front Office Operations", "Communication 1", "Food & Beverage 1"],
+            y1s2: ["Housekeeping Operations", "Customer Service Excellence", "Food Safety & Hygiene"],
+            y2s1: ["Hotel Admin & Operations", "Catering Management", "Tourism Studies", "Bar Operations"],
+            y2s2: ["Resort Management", "Hospitality Accounting", "Event Management", "Industry Placement"]
+        };
 
     document.getElementById('registrationForm').addEventListener('submit', function(e) {
         e.preventDefault();
